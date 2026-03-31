@@ -1,10 +1,10 @@
 package br.com.boaria.meu_primeiro_springboot.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import br.com.boaria.meu_primeiro_springboot.exceptions.RecursoNaoEncontradoException;
 import br.com.boaria.meu_primeiro_springboot.model.Produto;
 import br.com.boaria.meu_primeiro_springboot.repository.ProdutoRepository;
 
@@ -21,8 +21,9 @@ public class ProdutoService {
         return produtoRepository.findAll();
     }
 
-    public Optional<Produto> buscarPorId(Long id) {
-        return produtoRepository.findById(id);
+    public Produto buscarPorId(Long id) {
+        return produtoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com id: " + id));
     }
 
     public Produto salvarProduto(Produto produto) {
@@ -30,6 +31,9 @@ public class ProdutoService {
     }
 
     public void deletarProduto(Long id) {
+        if (!produtoRepository.existsById(id)) {
+            throw new RecursoNaoEncontradoException("Produto não encontrado com id: " + id);
+        }
         produtoRepository.deleteById(id);
     }
     

@@ -1,6 +1,7 @@
 package br.com.boaria.meu_primeiro_springboot.security;
 
 import java.security.Key;
+import java.util.Date;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -8,13 +9,15 @@ import io.jsonwebtoken.security.Keys;
 
 public class JwtUtil {
 
-    private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final long EXPIRATION_TIME = 86400000; // 1 dia em milissegundos
+    private static final String SECRET = "minha-chave-super-secreta-para-jwt-2026-boaria";
+    private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+
+    private static final long EXPIRATION_TIME = 86400000; // 1 dia
 
     public static String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
-                .setExpiration(new java.util.Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -30,11 +33,13 @@ public class JwtUtil {
 
     public static boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
-    
 }

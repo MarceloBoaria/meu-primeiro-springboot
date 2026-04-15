@@ -23,8 +23,8 @@ public class Usuario {
 
     public Usuario() {}
 
-    public Usuario(String usarname, String password) {
-        this.username = usarname;
+    public Usuario(String username, String password) {
+        this.username = username;
         this.password = password;
     }
 
